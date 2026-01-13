@@ -1,133 +1,297 @@
-# FastAPI Sample Application
+# Real-time Chat Application
 
-A comprehensive FastAPI application demonstrating best practices and common patterns.
+A full-featured real-time chat application built with Node.js, Express, Socket.IO, and JWT authentication. This application demonstrates WebSocket communication, user authentication, room management, and real-time messaging.
 
 ## Features
 
-- **User Management**: CRUD operations for users with validation
-- **Item Management**: Create and manage items linked to users
-- **Data Validation**: Pydantic models with field validation
-- **Query Parameters**: Pagination, filtering, and search
-- **Path Parameters**: Resource identification
-- **Error Handling**: Custom exception handling
-- **API Documentation**: Auto-generated with Swagger UI and ReDoc
-- **Enums**: Role-based user types
-- **Type Hints**: Full type annotation throughout
+### Core Features
+- ✅ **User Authentication**: Register and login with JWT tokens
+- 💬 **Real-time Messaging**: Instant message delivery using WebSocket
+- 🏠 **Chat Rooms**: Multiple rooms with member tracking
+- 👥 **User Presence**: Online/offline status tracking
+- ⌨️ **Typing Indicators**: See when other users are typing
+- 📜 **Message History**: Persistent message storage per room
+- 🎨 **Modern UI**: Clean, responsive interface
+- 🔐 **Secure**: Password hashing with bcrypt, JWT authentication
 
-## Installation
-
-1. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-## Running the Application
-
-### Option 1: Using uvicorn directly
-```bash
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-### Option 2: Running the Python file
-```bash
-python main.py
-```
-
-The API will be available at:
-- Main API: http://localhost:8000
-- Interactive docs (Swagger UI): http://localhost:8000/docs
-- Alternative docs (ReDoc): http://localhost:8000/redoc
-
-## API Endpoints
-
-### Root & Health
-- `GET /` - Welcome message
-- `GET /health` - Health check
-
-### Users
-- `POST /users/` - Create a new user
-- `GET /users/` - Get all users (with pagination and role filter)
-- `GET /users/{user_id}` - Get specific user
-- `PUT /users/{user_id}` - Update user
-- `DELETE /users/{user_id}` - Delete user
-
-### Items
-- `POST /users/{user_id}/items/` - Create item for user
-- `GET /users/{user_id}/items/` - Get all items for user
-- `GET /items/` - Get all items (with price filtering)
-- `GET /items/{item_id}` - Get specific item
-
-## Example Usage
-
-### Create a User
-```bash
-curl -X POST "http://localhost:8000/users/" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "johndoe",
-    "email": "john@example.com",
-    "full_name": "John Doe",
-    "password": "securepassword123",
-    "role": "user"
-  }'
-```
-
-### Get All Users
-```bash
-curl "http://localhost:8000/users/?skip=0&limit=10"
-```
-
-### Create an Item
-```bash
-curl -X POST "http://localhost:8000/users/1/items/" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Laptop",
-    "description": "High-performance laptop",
-    "price": 1299.99,
-    "tax": 10.5
-  }'
-```
-
-### Get Items with Price Filter
-```bash
-curl "http://localhost:8000/items/?min_price=100&max_price=2000"
-```
+### Technical Features
+- WebSocket communication with Socket.IO
+- RESTful API for authentication and room management
+- In-memory data storage (easily replaceable with database)
+- Token-based authentication
+- Real-time event broadcasting
+- Graceful connection handling
 
 ## Project Structure
 
 ```
 .
-├── main.py           # Main application file
-├── requirements.txt  # Python dependencies
-└── README.md        # This file
+├── server.js           # Main server with Express and Socket.IO
+├── package.json        # Dependencies and scripts
+├── public/
+│   ├── index.html     # Chat UI
+│   └── client.js      # Client-side WebSocket logic
+└── README.md          # This file
 ```
 
-## Key Concepts Demonstrated
+## Prerequisites
 
-1. **Pydantic Models**: Type-safe data validation with BaseModel
-2. **Dependency Injection**: (can be extended with FastAPI's Depends)
-3. **Path Operations**: GET, POST, PUT, DELETE
-4. **Query Parameters**: With validation and defaults
-5. **Path Parameters**: With validation constraints
-6. **Response Models**: Type-safe responses
-7. **Status Codes**: Appropriate HTTP status codes
-8. **Error Handling**: HTTPException and custom handlers
-9. **Documentation**: Auto-generated OpenAPI/Swagger docs
-10. **Enum Types**: For constrained string values
+- Node.js 16.x or higher
+- npm 8.x or higher
 
-## Next Steps
+## Installation
 
-To extend this application, consider adding:
-- Database integration (SQLAlchemy, MongoDB)
-- Authentication & Authorization (JWT tokens)
-- CORS middleware
-- Background tasks
-- WebSocket support
-- File uploads
-- Caching (Redis)
-- Testing (pytest)
-- Docker containerization
+1. **Install dependencies**:
+```bash
+npm install
+```
+
+## Running the Application
+
+### Development Mode (with auto-reload)
+```bash
+npm run dev
+```
+
+### Production Mode
+```bash
+npm start
+```
+
+The application will be available at `http://localhost:3000`
+
+## API Endpoints
+
+### Authentication
+
+#### Register User
+```bash
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "username": "johndoe",
+  "email": "john@example.com",
+  "password": "securepassword"
+}
+```
+
+#### Login User
+```bash
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "username": "johndoe",
+  "password": "securepassword"
+}
+```
+
+### Rooms
+
+#### Get All Rooms
+```bash
+GET /api/rooms
+```
+
+#### Create Room
+```bash
+POST /api/rooms
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "name": "Tech Talk",
+  "description": "Discuss technology and programming"
+}
+```
+
+#### Get Room Messages
+```bash
+GET /api/rooms/:roomId/messages?limit=50&offset=0
+```
+
+### Users
+
+#### Get Online Users
+```bash
+GET /api/users/online
+```
+
+### Health Check
+```bash
+GET /api/health
+```
+
+## WebSocket Events
+
+### Client → Server
+
+#### Authenticate
+```javascript
+socket.emit('authenticate', token);
+```
+
+#### Join Room
+```javascript
+socket.emit('join_room', roomId);
+```
+
+#### Leave Room
+```javascript
+socket.emit('leave_room', roomId);
+```
+
+#### Send Message
+```javascript
+socket.emit('send_message', {
+  content: 'Hello, world!',
+  type: 'text'
+});
+```
+
+#### Typing Indicators
+```javascript
+socket.emit('typing_start');
+socket.emit('typing_stop');
+```
+
+### Server → Client
+
+#### Authentication Success
+```javascript
+socket.on('authenticated', (user) => {
+  console.log('Logged in as:', user.username);
+});
+```
+
+#### New Message
+```javascript
+socket.on('new_message', (message) => {
+  console.log('New message:', message);
+});
+```
+
+#### Room History
+```javascript
+socket.on('room_history', (messages) => {
+  console.log('Room messages:', messages);
+});
+```
+
+#### User Joined/Left
+```javascript
+socket.on('user_joined', (data) => {
+  console.log(`${data.username} joined`);
+});
+
+socket.on('user_left', (data) => {
+  console.log(`${data.username} left`);
+});
+```
+
+## Usage Example
+
+### 1. Register and Login
+1. Open `http://localhost:3000` in your browser
+2. Click "Register" and create an account
+3. Login with your credentials
+
+### 2. Join a Room
+- The default "General" room will be available
+- Click on any room to join and start chatting
+
+### 3. Send Messages
+- Type your message in the input field
+- Press Enter or click "Send"
+- Messages appear in real-time for all users in the room
+
+### 4. Test with Multiple Users
+Open the app in multiple browser windows/tabs, register different users, and test real-time messaging!
+
+## Data Models
+
+### User
+```javascript
+{
+  id: string,
+  username: string,
+  email: string,
+  password: string (hashed),
+  avatar: string,
+  createdAt: string (ISO),
+  status: 'online' | 'offline'
+}
+```
+
+### Room
+```javascript
+{
+  id: string,
+  name: string,
+  description: string,
+  createdAt: string (ISO),
+  createdBy: string (userId),
+  members: string[] (userIds)
+}
+```
+
+### Message
+```javascript
+{
+  id: string,
+  roomId: string,
+  userId: string,
+  username: string,
+  content: string,
+  type: 'text',
+  timestamp: string (ISO),
+  edited: boolean
+}
+```
+
+## Security Features
+
+- Password hashing with bcrypt (10 rounds)
+- JWT token authentication (7-day expiration)
+- Token stored in localStorage
+- Password validation (minimum 6 characters)
+- CORS enabled for cross-origin requests
+
+## Key Technologies
+
+- **Express.js**: Web framework
+- **Socket.IO**: WebSocket library for real-time communication
+- **JWT (jsonwebtoken)**: Token-based authentication
+- **bcryptjs**: Password hashing
+- **CORS**: Cross-origin resource sharing
+
+## Production Recommendations
+
+1. **Environment Variables**: Move JWT_SECRET to .env file
+2. **Database**: Replace in-memory storage with MongoDB/PostgreSQL
+3. **HTTPS**: Use SSL/TLS certificates
+4. **Rate Limiting**: Add rate limiting middleware
+5. **Input Validation**: Enhanced validation
+6. **Redis**: For Socket.IO scaling across multiple servers
+7. **Logging**: Add proper logging with Winston
+8. **Monitoring**: Implement health checks and metrics
+
+## Troubleshooting
+
+### Port Already in Use
+```bash
+# Find process
+lsof -i :3000
+
+# Kill process
+kill -9 <PID>
+```
+
+### WebSocket Connection Failed
+- Verify server is running
+- Check CORS settings
+- Ensure firewall allows WebSocket connections
 
 ## License
 
