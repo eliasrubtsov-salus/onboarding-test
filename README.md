@@ -1,134 +1,146 @@
-# FastAPI Sample Application
+# Task Manager - .NET Backend + React Frontend
 
-A comprehensive FastAPI application demonstrating best practices and common patterns.
+A full-stack task management application built with .NET 8 Web API backend and React frontend. Features JWT authentication, CRUD operations, task statistics, and a modern responsive UI.
 
-## Features
+## 🚀 Features
 
-- **User Management**: CRUD operations for users with validation
-- **Item Management**: Create and manage items linked to users
-- **Data Validation**: Pydantic models with field validation
-- **Query Parameters**: Pagination, filtering, and search
-- **Path Parameters**: Resource identification
-- **Error Handling**: Custom exception handling
-- **API Documentation**: Auto-generated with Swagger UI and ReDoc
-- **Enums**: Role-based user types
-- **Type Hints**: Full type annotation throughout
+### Backend (.NET 8 Web API)
+- ✅ RESTful API with JWT authentication
+- 📊 Entity Framework Core with In-Memory database
+- 🔐 Password hashing with BCrypt
+- 📝 Swagger/OpenAPI documentation
+- 🎯 Clean architecture with services and repositories
+- ⚡ CORS configured for React frontend
 
-## Installation
+### Frontend (React + Vite)
+- ⚛️ React 18 with modern hooks
+- 🎨 Responsive UI with custom CSS
+- 🔐 Protected routes with authentication
+- 📊 Real-time task statistics dashboard
+- 🎯 Task filtering by status
+- ✏️ Create, edit, delete tasks
+- 📅 Due date tracking with overdue indicators
+- 🎨 Priority levels with color coding
 
-1. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-## Running the Application
-
-### Option 1: Using uvicorn directly
-```bash
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-### Option 2: Running the Python file
-```bash
-python main.py
-```
-
-The API will be available at:
-- Main API: http://localhost:8000
-- Interactive docs (Swagger UI): http://localhost:8000/docs
-- Alternative docs (ReDoc): http://localhost:8000/redoc
-
-## API Endpoints
-
-### Root & Health
-- `GET /` - Welcome message
-- `GET /health` - Health check
-
-### Users
-- `POST /users/` - Create a new user
-- `GET /users/` - Get all users (with pagination and role filter)
-- `GET /users/{user_id}` - Get specific user
-- `PUT /users/{user_id}` - Update user
-- `DELETE /users/{user_id}` - Delete user
-
-### Items
-- `POST /users/{user_id}/items/` - Create item for user
-- `GET /users/{user_id}/items/` - Get all items for user
-- `GET /items/` - Get all items (with price filtering)
-- `GET /items/{item_id}` - Get specific item
-
-## Example Usage
-
-### Create a User
-```bash
-curl -X POST "http://localhost:8000/users/" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "johndoe",
-    "email": "john@example.com",
-    "full_name": "John Doe",
-    "password": "securepassword123",
-    "role": "user"
-  }'
-```
-
-### Get All Users
-```bash
-curl "http://localhost:8000/users/?skip=0&limit=10"
-```
-
-### Create an Item
-```bash
-curl -X POST "http://localhost:8000/users/1/items/" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Laptop",
-    "description": "High-performance laptop",
-    "price": 1299.99,
-    "tax": 10.5
-  }'
-```
-
-### Get Items with Price Filter
-```bash
-curl "http://localhost:8000/items/?min_price=100&max_price=2000"
-```
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 .
-├── main.py           # Main application file
-├── requirements.txt  # Python dependencies
-└── README.md        # This file
+├── TaskManager.API/          # .NET Backend
+│   ├── Controllers/          # API Controllers
+│   ├── Services/             # Business logic
+│   ├── Data/                 # Database context
+│   ├── Models/               # Domain models
+│   ├── DTOs/                 # Data transfer objects
+│   ├── Program.cs            # Application entry point
+│   └── appsettings.json      # Configuration
+│
+└── TaskManager.UI/           # React Frontend
+    ├── src/
+    │   ├── components/       # Reusable components
+    │   ├── contexts/         # React contexts
+    │   ├── pages/            # Page components
+    │   ├── services/         # API services
+    │   └── App.jsx           # Main app component
+    ├── package.json
+    └── vite.config.js
 ```
 
-## Key Concepts Demonstrated
+## 🛠️ Prerequisites
 
-1. **Pydantic Models**: Type-safe data validation with BaseModel
-2. **Dependency Injection**: (can be extended with FastAPI's Depends)
-3. **Path Operations**: GET, POST, PUT, DELETE
-4. **Query Parameters**: With validation and defaults
-5. **Path Parameters**: With validation constraints
-6. **Response Models**: Type-safe responses
-7. **Status Codes**: Appropriate HTTP status codes
-8. **Error Handling**: HTTPException and custom handlers
-9. **Documentation**: Auto-generated OpenAPI/Swagger docs
-10. **Enum Types**: For constrained string values
+- .NET 8 SDK
+- Node.js 18+ and npm
 
-## Next Steps
+## 🚀 Getting Started
 
-To extend this application, consider adding:
-- Database integration (SQLAlchemy, MongoDB)
-- Authentication & Authorization (JWT tokens)
-- CORS middleware
-- Background tasks
-- WebSocket support
-- File uploads
-- Caching (Redis)
-- Testing (pytest)
-- Docker containerization
+### Backend Setup
 
-## License
+1. Navigate to API directory and restore dependencies:
+```bash
+cd TaskManager.API
+dotnet restore
+```
+
+2. Run the application:
+```bash
+dotnet run
+```
+
+The API will start at `http://localhost:5000`
+Swagger UI available at: `http://localhost:5000/swagger`
+
+### Frontend Setup
+
+1. Navigate to UI directory and install dependencies:
+```bash
+cd TaskManager.UI
+npm install
+```
+
+2. Start the development server:
+```bash
+npm run dev
+```
+
+The React app will start at `http://localhost:3000`
+
+## 📝 API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login user
+
+### Tasks (Requires JWT Token)
+- `GET /api/tasks` - Get all user tasks
+- `GET /api/tasks/{id}` - Get task by ID
+- `POST /api/tasks` - Create new task
+- `PUT /api/tasks/{id}` - Update task
+- `DELETE /api/tasks/{id}` - Delete task
+- `GET /api/tasks/stats` - Get task statistics
+
+## 🧪 Demo Account
+
+Pre-seeded demo account:
+- **Username**: `demo`
+- **Password**: `demo123`
+
+## 🎯 Data Models
+
+### Task Statuses
+- Todo
+- InProgress
+- Completed
+
+### Task Priorities
+- Low
+- Medium
+- High
+- Urgent
+
+## 🔒 Security
+
+- Passwords hashed with BCrypt
+- JWT tokens (7-day expiration)
+- CORS configured for frontend
+- Authorization on protected routes
+
+## 📦 Technologies
+
+### Backend
+- .NET 8.0
+- ASP.NET Core Web API
+- Entity Framework Core
+- JWT Authentication
+- BCrypt.Net
+- Swagger/OpenAPI
+
+### Frontend
+- React 18
+- React Router DOM
+- Axios
+- Vite
+- date-fns
+
+## 📄 License
 
 MIT
